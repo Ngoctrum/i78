@@ -94,9 +94,26 @@ export const Header = () => {
                 {isAdmin && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate("/admin")}>
+                    <DropdownMenuItem onClick={() => navigate("/admin/dashboard")}>
                       <LayoutDashboard className="mr-2 h-4 w-4" />
-                      Dashboard Admin
+                      Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/admin/orders")}>
+                      <Package className="mr-2 h-4 w-4" />
+                      Quản lý đơn
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/admin/users")}>
+                      <User className="mr-2 h-4 w-4" />
+                      Quản lý user
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/admin/vouchers")}>
+                      Voucher
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/admin/support")}>
+                      Hỗ trợ
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/admin/settings")}>
+                      Cài đặt
                     </DropdownMenuItem>
                   </>
                 )}
