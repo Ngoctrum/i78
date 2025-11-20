@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Package, CheckCircle2, Truck, Facebook, Mail } from "lucide-react";
+import { Search, Package, CheckCircle2, Truck, Facebook, Mail, Shield, Clock, DollarSign } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import Logo from "@/components/Layout/Logo";
 
 const Home = () => {
   const [orderCode, setOrderCode] = useState("");
@@ -19,19 +20,26 @@ const Home = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10 py-20">
-        <div className="container">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="container relative">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              <span className="bg-gradient-to-r from-primary to-shopee-red bg-clip-text text-transparent">
-                Ani Shop
+            <div className="mb-6 flex justify-center">
+              <div className="transform hover:scale-105 transition-transform">
+                <Logo />
+              </div>
+            </div>
+            <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+              Dịch vụ đặt hàng Shopee
+              <span className="block mt-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Nhanh • Rẻ • Uy tín
               </span>
             </h1>
-            <p className="mb-8 text-xl text-muted-foreground">
-              Dịch vụ đặt đơn hộ Shopee nhanh - rẻ - uy tín
+            <p className="mb-8 text-lg text-muted-foreground">
+              Giúp bạn mua sắm Shopee dễ dàng với chi phí tốt nhất
             </p>
 
             {/* Track Order Input */}
-            <Card className="mx-auto max-w-md shadow-lg">
+            <Card className="mx-auto max-w-md shadow-elevated border-primary/20 hover:shadow-glow transition-all">
               <CardContent className="pt-6">
                 <div className="flex gap-2">
                   <Input
@@ -39,9 +47,9 @@ const Home = () => {
                     value={orderCode}
                     onChange={(e) => setOrderCode(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleTrack()}
-                    className="flex-1"
+                    className="flex-1 border-primary/20"
                   />
-                  <Button onClick={handleTrack} className="gap-2">
+                  <Button onClick={handleTrack} className="gap-2 shadow-lg hover:shadow-glow">
                     <Search className="h-4 w-4" />
                     Tra cứu
                   </Button>
