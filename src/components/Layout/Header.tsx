@@ -4,6 +4,7 @@ import { Package, User, LogOut, LayoutDashboard, Menu, Settings, Ticket } from "
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
+import Logo from "./Logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,11 +65,8 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-          <Package className="h-6 w-6 text-primary" />
-          <span className="bg-gradient-to-r from-primary to-shopee-red bg-clip-text text-transparent">
-            Ani Shop
-          </span>
+        <Link to="/" className="flex items-center gap-2">
+          <Logo />
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">

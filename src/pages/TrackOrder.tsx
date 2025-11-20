@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Loader2, Package, CheckCircle2, Truck, XCircle, Clock, DollarSign } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import PaymentQRCode from "@/components/PaymentQRCode";
 
 const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
   pending: { label: "Chờ duyệt", color: "bg-yellow-500", icon: Clock },
@@ -22,6 +23,7 @@ const TrackOrder = () => {
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<any>(null);
   const [voucher, setVoucher] = useState<any>(null);
+  const [bankSettings, setBankSettings] = useState<any>({ bank_name: "", bank_account_number: "", bank_account_name: "" });
 
   useEffect(() => {
     if (orderCode) {
@@ -49,6 +51,23 @@ const TrackOrder = () => {
           .single();
 
         setVoucher(voucherData);
+      }
+
+      // Fetch bank settings
+      const { data: settingsData } = await supabase
+        .from("site_settings")
+        .select("*");
+      
+      if (settingsData) {
+        const settingsMap: any = {};
+        settingsData.forEach((setting) => {
+          settingsMap[setting.key] = setting.value;
+        });
+        setBankSettings({
+          bank_name: settingsMap.bank_name || "MBank",
+          bank_account_number: settingsMap.bank_account_number || "",
+          bank_account_name: settingsMap.bank_account_name || "",
+        });
       }
     } catch (error) {
       console.error("Error fetching order:", error);
@@ -191,30 +210,38 @@ const TrackOrder = () => {
               </div>
             )}
 
-            {order.service_fee > 0 && order.payment_status === "unpaid" && (
-              <div className="border-t pt-4 space-y-4">
-                <Alert>
-                  <DollarSign className="h-4 w-4" />
-                  <AlertDescription>
-                    Vui lòng thanh toán phí dịch vụ: <strong>{order.service_fee.toLocaleString()}đ</strong>
-                    <br />
-                    Nội dung chuyển khoản: <strong>{order.order_code}</strong>
-                  </AlertDescription>
-                </Alert>
-                <Button className="w-full">Tôi đã thanh toán</Button>
+            {order.service_fee > 0 && (
+              <div className="border-t pt-4">
+                <p className="text-sm text-muted-foreground mb-1">Phí dịch vụ</p>
+                <p className="font-bold text-lg text-primary">
+                  {order.service_fee.toLocaleString('vi-VN')} đ
+                </p>
               </div>
             )}
-
-            {order.status === "pending" && (
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => navigate(`/edit-request/${order.id}`)}
-              >
-                Yêu cầu chỉnh sửa đơn
-              </Button>
-            )}
           </div>
+
+          {/* Payment QR Code - Show when tracking code exists and unpaid */}
+          {order.tracking_code && order.service_fee > 0 && order.payment_status === "unpaid" && (
+            <div className="border-t pt-6">
+              <PaymentQRCode
+                bankName={bankSettings.bank_name}
+                accountNumber={bankSettings.bank_account_number}
+                accountName={bankSettings.bank_account_name}
+                amount={order.service_fee}
+                orderCode={order.order_code}
+              />
+            </div>
+          )}
+
+          {order.status === "pending" && (
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => navigate(`/edit-request/${order.id}`)}
+            >
+              Yêu cầu chỉnh sửa đơn
+            </Button>
+          )}
         </CardContent>
       </Card>
     </div>

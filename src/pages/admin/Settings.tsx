@@ -15,6 +15,9 @@ const Settings = () => {
     banner_text: "",
     banner_color: "#EE4D2D",
     maintenance_mode: false,
+    bank_name: "MBank",
+    bank_account_number: "",
+    bank_account_name: "",
   });
 
   useEffect(() => {
@@ -38,6 +41,9 @@ const Settings = () => {
           banner_text: settingsMap.banner_text || "",
           banner_color: settingsMap.banner_color || "#EE4D2D",
           maintenance_mode: settingsMap.maintenance_mode === "true",
+          bank_name: settingsMap.bank_name || "MBank",
+          bank_account_number: settingsMap.bank_account_number || "",
+          bank_account_name: settingsMap.bank_account_name || "",
         });
       }
     } catch (error) {
@@ -65,6 +71,9 @@ const Settings = () => {
         updateSetting("banner_text", settings.banner_text),
         updateSetting("banner_color", settings.banner_color),
         updateSetting("maintenance_mode", settings.maintenance_mode.toString()),
+        updateSetting("bank_name", settings.bank_name),
+        updateSetting("bank_account_number", settings.bank_account_number),
+        updateSetting("bank_account_name", settings.bank_account_name),
       ]);
 
       toast.success("Lưu cài đặt thành công");
@@ -147,6 +156,34 @@ const Settings = () => {
                 onCheckedChange={(checked) =>
                   setSettings({ ...settings, maintenance_mode: checked })
                 }
+              />
+            </div>
+          </div>
+
+          <div className="border-t pt-6 space-y-4">
+            <h3 className="font-semibold">Thông tin ngân hàng</h3>
+            <div>
+              <Label>Tên ngân hàng</Label>
+              <Input
+                value={settings.bank_name}
+                onChange={(e) => setSettings({ ...settings, bank_name: e.target.value })}
+                placeholder="MBank"
+              />
+            </div>
+            <div>
+              <Label>Số tài khoản</Label>
+              <Input
+                value={settings.bank_account_number}
+                onChange={(e) => setSettings({ ...settings, bank_account_number: e.target.value })}
+                placeholder="Nhập số tài khoản"
+              />
+            </div>
+            <div>
+              <Label>Tên chủ tài khoản</Label>
+              <Input
+                value={settings.bank_account_name}
+                onChange={(e) => setSettings({ ...settings, bank_account_name: e.target.value })}
+                placeholder="Nhập tên chủ tài khoản"
               />
             </div>
           </div>

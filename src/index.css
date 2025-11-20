@@ -52,10 +52,16 @@ All colors MUST be HSL.
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(14 100% 57%), hsl(7 93% 48%));
     --gradient-hero: linear-gradient(135deg, hsl(14 100% 57% / 0.1), hsl(217 91% 60% / 0.1));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(24 95% 98%));
     
     /* Shadows */
     --shadow-glow: 0 4px 20px hsl(14 100% 57% / 0.3);
     --shadow-card: 0 2px 8px hsl(0 0% 0% / 0.1);
+    --shadow-elevated: 0 10px 40px hsl(0 0% 0% / 0.15);
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
   .dark {
