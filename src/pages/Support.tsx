@@ -8,6 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { z } from "zod";
+
+const supportSchema = z.object({
+  orderCode: z.string().trim().min(1, { message: "Vui lòng nhập mã đơn hàng" }).max(50, { message: "Mã đơn hàng không hợp lệ" }),
+  description: z.string().trim().min(10, { message: "Mô tả vấn đề phải có ít nhất 10 ký tự" }).max(2000, { message: "Mô tả quá dài, vui lòng rút gọn" }),
+  contactLink: z.string().trim().min(1, { message: "Vui lòng nhập link liên hệ" }).max(500, { message: "Link liên hệ quá dài" }),
+  imageUrl: z.string().trim().url({ message: "Link ảnh không hợp lệ" }).max(2000, { message: "Link ảnh quá dài" }).optional().or(z.literal("")),
+});
 
 const Support = () => {
   const navigate = useNavigate();
@@ -24,6 +32,21 @@ const Support = () => {
     setLoading(true);
 
     try {
+      // Validate form data
+      const validationResult = supportSchema.safeParse({
+        orderCode: formData.orderCode,
+        description: formData.description,
+        contactLink: formData.contactLink,
+        imageUrl: formData.imageUrl,
+      });
+
+      if (!validationResult.success) {
+        const firstError = validationResult.error.errors[0];
+        toast.error(firstError.message);
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.from("support_tickets").insert({
         order_code: formData.orderCode,
         description: formData.description,
