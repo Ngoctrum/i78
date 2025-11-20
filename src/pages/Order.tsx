@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { z } from "zod";
 
 interface Voucher {
   id: string;
@@ -18,6 +19,16 @@ interface Voucher {
   fee_amount: number;
   description: string | null;
 }
+
+const orderSchema = z.object({
+  productLink: z.string().trim().url({ message: "Vui lòng nhập link sản phẩm hợp lệ" }).max(2000, { message: "Link sản phẩm quá dài" }),
+  quantity: z.number().int().min(1, { message: "Số lượng phải lớn hơn 0" }),
+  recipientName: z.string().trim().min(1, { message: "Vui lòng nhập tên người nhận" }).max(100, { message: "Tên người nhận không được quá 100 ký tự" }),
+  phoneOrContact: z.string().trim().min(1, { message: "Vui lòng nhập số điện thoại hoặc liên hệ" }).max(50, { message: "Số điện thoại không được quá 50 ký tự" }),
+  address: z.string().trim().min(1, { message: "Vui lòng nhập địa chỉ" }).max(500, { message: "Địa chỉ không được quá 500 ký tự" }),
+  email: z.string().trim().email({ message: "Email không hợp lệ" }).max(255, { message: "Email quá dài" }).optional().or(z.literal("")),
+  notes: z.string().max(1000, { message: "Ghi chú không được quá 1000 ký tự" }).optional(),
+});
 
 const Order = () => {
   const navigate = useNavigate();
@@ -82,6 +93,24 @@ const Order = () => {
     setLoading(true);
 
     try {
+      // Validate form data
+      const validationResult = orderSchema.safeParse({
+        productLink: formData.productLink,
+        quantity: formData.quantity,
+        recipientName: formData.recipientName,
+        phoneOrContact: formData.phoneOrContact,
+        address: formData.address,
+        email: formData.email,
+        notes: formData.notes,
+      });
+
+      if (!validationResult.success) {
+        const firstError = validationResult.error.errors[0];
+        toast.error(firstError.message);
+        setLoading(false);
+        return;
+      }
+
       const orderCode = await generateOrderCode();
       
       const selectedVoucher = vouchers.find(v => v.id === formData.voucherId);

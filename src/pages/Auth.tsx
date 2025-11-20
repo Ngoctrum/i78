@@ -16,6 +16,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { z } from "zod";
+
+const authSchema = z.object({
+  email: z.string().trim().email({ message: "Email không hợp lệ" }).max(255, { message: "Email quá dài" }),
+  password: z.string().min(6, { message: "Mật khẩu phải có ít nhất 6 ký tự" }).max(128, { message: "Mật khẩu quá dài" }),
+  fullName: z.string().trim().min(2, { message: "Họ tên phải có ít nhất 2 ký tự" }).max(100, { message: "Họ tên quá dài" }).optional(),
+});
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -40,6 +47,20 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      // Validate form data
+      const validationResult = authSchema.safeParse({
+        email,
+        password,
+        fullName,
+      });
+
+      if (!validationResult.success) {
+        const firstError = validationResult.error.errors[0];
+        toast.error(firstError.message);
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -69,6 +90,19 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      // Validate form data
+      const validationResult = authSchema.safeParse({
+        email,
+        password,
+      });
+
+      if (!validationResult.success) {
+        const firstError = validationResult.error.errors[0];
+        toast.error(firstError.message);
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -105,6 +139,16 @@ const Auth = () => {
     setResetLoading(true);
 
     try {
+      // Validate email
+      const emailSchema = z.string().trim().email({ message: "Email không hợp lệ" });
+      const validationResult = emailSchema.safeParse(resetEmail);
+
+      if (!validationResult.success) {
+        toast.error(validationResult.error.errors[0].message);
+        setResetLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
         redirectTo: `${window.location.origin}/auth`,
       });
