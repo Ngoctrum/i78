@@ -62,6 +62,15 @@ const App = () => (
               </UserLayout>
             }
           />
+          {/* Backward compatible route */}
+          <Route
+            path="/orders"
+            element={
+              <UserLayout>
+                <MyOrders />
+              </UserLayout>
+            }
+          />
           <Route
             path="/support"
             element={

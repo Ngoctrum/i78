@@ -25,9 +25,13 @@ const TrackOrder = () => {
   const [voucher, setVoucher] = useState<any>(null);
   const [bankSettings, setBankSettings] = useState<any>({ bank_name: "", bank_account_number: "", bank_account_name: "" });
 
+  const isValidOrderCode = orderCode && /^ANI\d{6}$/i.test(orderCode);
+
   useEffect(() => {
-    if (orderCode) {
+    if (orderCode && isValidOrderCode) {
       fetchOrder();
+    } else {
+      setLoading(false);
     }
   }, [orderCode]);
 
@@ -87,6 +91,25 @@ const TrackOrder = () => {
     const visibleCount = Math.ceil(parts.length * 0.5);
     return parts.slice(0, visibleCount).join(",") + ", ***";
   };
+
+  if (!loading && !isValidOrderCode) {
+    return (
+      <div className="container py-20">
+        <Alert>
+          <AlertDescription>
+            Mã bạn nhập không đúng định dạng (ví dụ đúng: ANI123456). Vui lòng quay lại trang tra cứu và nhập lại mã đơn.
+          </AlertDescription>
+          <Button
+            className="mt-4"
+            variant="outline"
+            onClick={() => navigate("/track")}
+          >
+            Quay lại trang tra cứu
+          </Button>
+        </Alert>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
