@@ -37,7 +37,7 @@ const Auth = () => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate("/");
+        navigate("/home");
       }
     });
   }, [navigate]);
@@ -126,7 +126,7 @@ const Auth = () => {
       }
 
       toast.success("Đăng nhập thành công!");
-      navigate("/");
+      navigate("/home");
     } catch (error: any) {
       toast.error(error.message || "Đăng nhập thất bại");
     } finally {
