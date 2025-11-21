@@ -11,8 +11,8 @@ interface PaymentQRCodeProps {
 }
 
 const PaymentQRCode = ({ bankName, accountNumber, accountName, amount, orderCode }: PaymentQRCodeProps) => {
-  // Generate VietQR URL - bank code must be uppercase
-  const bankCode = bankName.toUpperCase();
+  // Generate VietQR URL - bank code must be lowercase slug
+  const bankCode = bankName.trim().toLowerCase().replace(/\s+/g, "");
   const qrUrl = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-compact2.jpg?amount=${amount}&addInfo=${encodeURIComponent(orderCode)}&accountName=${encodeURIComponent(accountName)}`;
 
   if (!accountNumber) {
