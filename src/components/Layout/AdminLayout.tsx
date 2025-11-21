@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   Gift,
+  Home,
 } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "./Logo";
@@ -22,6 +23,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const menuItems = [
+    { path: "/home", label: "Trang chủ User", icon: Home },
     { path: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/admin/orders", label: "Đơn hàng", icon: Package },
     { path: "/admin/users", label: "Người dùng", icon: Users },
