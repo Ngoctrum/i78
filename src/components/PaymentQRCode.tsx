@@ -11,8 +11,14 @@ interface PaymentQRCodeProps {
 }
 
 const PaymentQRCode = ({ bankName, accountNumber, accountName, amount, orderCode }: PaymentQRCodeProps) => {
-  // Generate VietQR URL - bank code must be lowercase slug
-  const bankCode = bankName.trim().toLowerCase().replace(/\s+/g, "");
+  // Generate VietQR URL - use VietQR bank code
+  const normalizedBank = bankName.trim().toLowerCase().replace(/\s+/g, "");
+  const bankCodeMap: Record<string, string> = {
+    mb: "mbbank",
+    mbank: "mbbank",
+    mbbank: "mbbank",
+  };
+  const bankCode = bankCodeMap[normalizedBank] ?? normalizedBank;
   const qrUrl = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-compact2.jpg?amount=${amount}&addInfo=${encodeURIComponent(orderCode)}&accountName=${encodeURIComponent(accountName)}`;
 
   if (!accountNumber) {
