@@ -41,18 +41,22 @@ const TrackOrder = () => {
         .from("orders")
         .select("*")
         .eq("order_code", orderCode)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching order:", error);
+        setOrder(null);
+        return;
+      }
 
       setOrder(orderData);
 
-      if (orderData.voucher_id) {
+      if (orderData?.voucher_id) {
         const { data: voucherData } = await supabase
           .from("vouchers")
           .select("*")
           .eq("id", orderData.voucher_id)
-          .single();
+          .maybeSingle();
 
         setVoucher(voucherData);
       }
