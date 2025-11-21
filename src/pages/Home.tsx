@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Package, CheckCircle2, Truck, Facebook, Mail, Shield, Clock, DollarSign } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import Logo from "@/components/Layout/Logo";
 
 const Home = () => {
   const [orderCode, setOrderCode] = useState("");
@@ -19,22 +18,17 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10 py-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10 py-16">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div className="container relative">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 flex justify-center">
-              <div className="transform hover:scale-105 transition-transform">
-                <Logo />
-              </div>
-            </div>
-            <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+            <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl animate-fade-in">
               Dịch vụ đặt hàng Shopee
               <span className="block mt-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Nhanh • Rẻ • Uy tín
               </span>
             </h1>
-            <p className="mb-8 text-lg text-muted-foreground">
+            <p className="mb-8 text-lg text-muted-foreground animate-fade-in" style={{ animationDelay: "100ms" }}>
               Giúp bạn mua sắm Shopee dễ dàng với chi phí tốt nhất
             </p>
 
