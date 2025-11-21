@@ -1,153 +1,243 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search, Package, CheckCircle2, Truck, Facebook, Mail, Shield, Clock, DollarSign } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Package, 
+  Plus, 
+  Search, 
+  HelpCircle, 
+  TrendingUp,
+  Clock,
+  CheckCircle2,
+  Truck,
+  ShoppingBag
+} from "lucide-react";
+
+const statusConfig: Record<string, { label: string; variant: any; icon: any }> = {
+  pending: { label: "Chờ duyệt", variant: "secondary", icon: Clock },
+  ordered: { label: "Đã đặt", variant: "default", icon: Package },
+  shipping: { label: "Đang giao", variant: "default", icon: Truck },
+  completed: { label: "Thành công", variant: "default", icon: CheckCircle2 },
+  awaiting_payment: { label: "Chờ thanh toán", variant: "secondary", icon: Clock },
+};
 
 const Home = () => {
-  const [orderCode, setOrderCode] = useState("");
   const navigate = useNavigate();
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
+  const [stats, setStats] = useState({ total: 0, pending: 0, completed: 0 });
+  const [loading, setLoading] = useState(true);
 
-  const handleTrack = () => {
-    if (orderCode.trim()) {
-      navigate(`/track/${orderCode.trim()}`);
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Fetch recent orders
+      const { data: orders } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      if (orders) {
+        setRecentOrders(orders);
+        setStats({
+          total: orders.length,
+          pending: orders.filter(o => o.status === "pending" || o.status === "awaiting_payment").length,
+          completed: orders.filter(o => o.status === "completed").length,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-accent/10 py-16">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="container relative">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl animate-fade-in">
-              Dịch vụ đặt hàng Shopee
-              <span className="block mt-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Nhanh • Rẻ • Uy tín
-              </span>
-            </h1>
-            <p className="mb-8 text-lg text-muted-foreground animate-fade-in" style={{ animationDelay: "100ms" }}>
-              Giúp bạn mua sắm Shopee dễ dàng với chi phí tốt nhất
-            </p>
+  const quickActions = [
+    {
+      icon: Plus,
+      label: "Đặt hàng mới",
+      description: "Tạo đơn hàng Shopee",
+      action: () => navigate("/order"),
+      gradient: "from-primary to-orange-500",
+    },
+    {
+      icon: Search,
+      label: "Tra cứu đơn",
+      description: "Kiểm tra trạng thái",
+      action: () => navigate("/track"),
+      gradient: "from-blue-500 to-cyan-500",
+    },
+    {
+      icon: HelpCircle,
+      label: "Hỗ trợ",
+      description: "Liên hệ admin",
+      action: () => navigate("/support"),
+      gradient: "from-purple-500 to-pink-500",
+    },
+  ];
 
-            {/* Track Order Input */}
-            <Card className="mx-auto max-w-md shadow-elevated border-primary/20 hover:shadow-glow transition-all">
+  return (
+    <div className="space-y-8">
+      {/* Welcome Section */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-accent p-8 text-white animate-fade-in">
+        <div className="relative z-10">
+          <h1 className="text-3xl font-bold mb-2">
+            Chào mừng trở lại! 👋
+          </h1>
+          <p className="text-white/90 text-lg">
+            Sẵn sàng đặt hàng Shopee với chúng tôi
+          </p>
+        </div>
+        <div className="absolute right-0 top-0 h-full w-1/3 opacity-20">
+          <ShoppingBag className="h-full w-full" />
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-3 animate-fade-in" style={{ animationDelay: "100ms" }}>
+        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent hover:shadow-lg transition-shadow">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Tổng đơn</p>
+                <p className="text-3xl font-bold text-primary">{stats.total}</p>
+              </div>
+              <div className="rounded-full bg-primary/10 p-3">
+                <Package className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-accent/20 bg-gradient-to-br from-accent/5 to-transparent hover:shadow-lg transition-shadow">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Đang xử lý</p>
+                <p className="text-3xl font-bold text-accent">{stats.pending}</p>
+              </div>
+              <div className="rounded-full bg-accent/10 p-3">
+                <Clock className="h-6 w-6 text-accent" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-green-500/20 bg-gradient-to-br from-green-500/5 to-transparent hover:shadow-lg transition-shadow">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Hoàn thành</p>
+                <p className="text-3xl font-bold text-green-600">{stats.completed}</p>
+              </div>
+              <div className="rounded-full bg-green-500/10 p-3">
+                <CheckCircle2 className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="animate-fade-in" style={{ animationDelay: "200ms" }}>
+        <h2 className="text-2xl font-bold mb-4">Thao tác nhanh</h2>
+        <div className="grid gap-4 md:grid-cols-3">
+          {quickActions.map((action, index) => (
+            <Card
+              key={index}
+              className="group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 hover:border-primary/50"
+              onClick={action.action}
+            >
               <CardContent className="pt-6">
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Nhập mã đơn hàng..."
-                    value={orderCode}
-                    onChange={(e) => setOrderCode(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleTrack()}
-                    className="flex-1 border-primary/20"
-                  />
-                  <Button onClick={handleTrack} className="gap-2 shadow-lg hover:shadow-glow">
-                    <Search className="h-4 w-4" />
-                    Tra cứu
-                  </Button>
+                <div className={`mb-4 inline-flex rounded-2xl bg-gradient-to-br ${action.gradient} p-4 text-white group-hover:scale-110 transition-transform`}>
+                  <action.icon className="h-6 w-6" />
                 </div>
+                <h3 className="text-lg font-bold mb-1">{action.label}</h3>
+                <p className="text-sm text-muted-foreground">{action.description}</p>
               </CardContent>
             </Card>
+          ))}
+        </div>
+      </div>
 
-            <div className="mt-8 flex justify-center gap-4">
-              <Button
-                size="lg"
-                onClick={() => navigate("/order")}
-                className="gap-2 shadow-lg hover:shadow-xl transition-all"
-              >
-                <Package className="h-5 w-5" />
+      {/* Recent Orders */}
+      <div className="animate-fade-in" style={{ animationDelay: "300ms" }}>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold">Đơn hàng gần đây</h2>
+          <Button variant="outline" onClick={() => navigate("/my-orders")}>
+            Xem tất cả
+          </Button>
+        </div>
+
+        {loading ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            </CardContent>
+          </Card>
+        ) : recentOrders.length === 0 ? (
+          <Card className="border-dashed">
+            <CardContent className="py-12 text-center">
+              <Package className="h-12 w-12 mx-auto mb-3 text-muted-foreground opacity-50" />
+              <p className="text-muted-foreground mb-4">Chưa có đơn hàng nào</p>
+              <Button onClick={() => navigate("/order")} className="gap-2">
+                <Plus className="h-4 w-4" />
                 Đặt hàng ngay
               </Button>
-            </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {recentOrders.map((order) => {
+              const StatusIcon = statusConfig[order.status]?.icon || Clock;
+              return (
+                <Card
+                  key={order.id}
+                  className="hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => navigate(`/track/${order.order_code}`)}
+                >
+                  <CardContent className="pt-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono font-bold text-primary">
+                            {order.order_code}
+                          </span>
+                          <Badge variant={statusConfig[order.status]?.variant || "secondary"}>
+                            {statusConfig[order.status]?.label}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground line-clamp-1">
+                          {order.product_link}
+                        </p>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span>{new Date(order.created_at).toLocaleDateString("vi-VN")}</span>
+                          {order.service_fee > 0 && (
+                            <span className="font-semibold text-primary">
+                              {order.service_fee.toLocaleString("vi-VN")} đ
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <StatusIcon className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-20 bg-muted/30">
-        <div className="container">
-          <h2 className="mb-12 text-center text-3xl font-bold">Cách thức hoạt động</h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            <Card className="text-center shadow-md hover:shadow-lg transition-shadow">
-              <CardContent className="pt-8">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                  <Package className="h-8 w-8 text-primary" />
-                </div>
-                <h3 className="mb-2 text-xl font-semibold">1. Điền thông tin</h3>
-                <p className="text-muted-foreground">
-                  Cung cấp link sản phẩm Shopee và thông tin nhận hàng của bạn
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center shadow-md hover:shadow-lg transition-shadow">
-              <CardContent className="pt-8">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">
-                  <CheckCircle2 className="h-8 w-8 text-accent" />
-                </div>
-                <h3 className="mb-2 text-xl font-semibold">2. Admin đặt hàng</h3>
-                <p className="text-muted-foreground">
-                  Chúng tôi sẽ kiểm tra và đặt đơn hàng cho bạn trên Shopee
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center shadow-md hover:shadow-lg transition-shadow">
-              <CardContent className="pt-8">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success-green/10">
-                  <Truck className="h-8 w-8 text-success-green" />
-                </div>
-                <h3 className="mb-2 text-xl font-semibold">3. Nhận hàng</h3>
-                <p className="text-muted-foreground">
-                  Nhận hàng và thanh toán phí dịch vụ sau khi đơn thành công
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="py-20">
-        <div className="container">
-          <h2 className="mb-12 text-center text-3xl font-bold">Liên hệ với chúng tôi</h2>
-          <div className="mx-auto max-w-md">
-            <div className="flex flex-col gap-4">
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-2 justify-start"
-                onClick={() => window.open("https://zalo.me/", "_blank")}
-              >
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12c0 5.52 4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
-                </svg>
-                Zalo
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-2 justify-start"
-                onClick={() => window.open("https://facebook.com/", "_blank")}
-              >
-                <Facebook className="h-5 w-5" />
-                Facebook
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="gap-2 justify-start"
-                onClick={() => (window.location.href = "mailto:support@anishop.com")}
-              >
-                <Mail className="h-5 w-5" />
-                Email: support@anishop.com
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+        )}
+      </div>
     </div>
   );
 };
