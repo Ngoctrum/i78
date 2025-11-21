@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Order from "./pages/Order";
 import TrackOrder from "./pages/TrackOrder";
+import TrackSearch from "./pages/TrackSearch";
 import MyOrders from "./pages/MyOrders";
 import Support from "./pages/Support";
 import Dashboard from "./pages/admin/Dashboard";
@@ -33,8 +34,8 @@ const App = () => (
           {/* Public Routes - No Layout */}
           <Route path="/" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/track" element={<TrackSearch />} />
           <Route path="/track/:orderCode" element={<TrackOrder />} />
-          <Route path="/track" element={<TrackOrder />} />
 
           {/* User Routes - UserLayout */}
           <Route
