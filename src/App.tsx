@@ -3,8 +3,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Header } from "./components/Layout/Header";
-import { Banner } from "./components/Layout/Banner";
+import AdminLayout from "./components/Layout/AdminLayout";
+import UserLayout from "./components/Layout/UserLayout";
+import Landing from "./pages/Landing";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Order from "./pages/Order";
@@ -28,28 +29,116 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Banner />
-        <Header />
-        <main className="min-h-screen">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/order" element={<Order />} />
-            <Route path="/track/:orderCode" element={<TrackOrder />} />
-            <Route path="/orders" element={<MyOrders />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/admin" element={<Dashboard />} />
-            <Route path="/admin/dashboard" element={<Dashboard />} />
-            <Route path="/admin/orders" element={<Orders />} />
-            <Route path="/admin/orders/:id" element={<OrderDetail />} />
-            <Route path="/admin/users" element={<Users />} />
-            <Route path="/admin/vouchers" element={<Vouchers />} />
-            <Route path="/admin/support" element={<AdminSupport />} />
-            <Route path="/admin/settings" element={<Settings />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
+        <Routes>
+          {/* Public Routes - No Layout */}
+          <Route path="/" element={<Landing />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/track/:orderCode" element={<TrackOrder />} />
+          <Route path="/track" element={<TrackOrder />} />
+
+          {/* User Routes - UserLayout */}
+          <Route
+            path="/home"
+            element={
+              <UserLayout>
+                <Home />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/order"
+            element={
+              <UserLayout>
+                <Order />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/my-orders"
+            element={
+              <UserLayout>
+                <MyOrders />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/support"
+            element={
+              <UserLayout>
+                <Support />
+              </UserLayout>
+            }
+          />
+
+          {/* Admin Routes - AdminLayout */}
+          <Route
+            path="/admin"
+            element={
+              <AdminLayout>
+                <Dashboard />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <AdminLayout>
+                <Dashboard />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <AdminLayout>
+                <Orders />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/orders/:id"
+            element={
+              <AdminLayout>
+                <OrderDetail />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <AdminLayout>
+                <Users />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/vouchers"
+            element={
+              <AdminLayout>
+                <Vouchers />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/support"
+            element={
+              <AdminLayout>
+                <AdminSupport />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <AdminLayout>
+                <Settings />
+              </AdminLayout>
+            }
+          />
+
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
