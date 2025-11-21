@@ -47,16 +47,23 @@ export const Header = () => {
   }, []);
 
   const checkAdmin = async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", userId)
       .eq("role", "admin")
       .maybeSingle();
-    
+
+    console.log("checkAdmin result", { data, error, userId });
+
+    if (error) {
+      console.error("checkAdmin error", error);
+      setIsAdmin(false);
+      return;
+    }
+
     setIsAdmin(!!data);
   };
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/");
