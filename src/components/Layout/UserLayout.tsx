@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Home, Package, HelpCircle, LogOut, Menu, X, LayoutDashboard } from "lucide-react";
+import { Home, Package, HelpCircle, LogOut, Menu, X, LayoutDashboard, User } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "./Logo";
 import { Banner } from "./Banner";
@@ -56,6 +56,7 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
     { path: "/home", label: "Trang chủ", icon: Home },
     { path: "/my-orders", label: "Đơn của tôi", icon: Package },
     { path: "/support", label: "Hỗ trợ", icon: HelpCircle },
+    { path: "/profile", label: "Tài khoản", icon: User },
   ];
 
   const handleLogout = async () => {
