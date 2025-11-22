@@ -21,6 +21,7 @@ import Vouchers from "./pages/admin/Vouchers";
 import AdminSupport from "./pages/admin/Support";
 import Settings from "./pages/admin/Settings";
 import NotFound from "./pages/NotFound";
+import Reset from "./pages/Reset";
 
 const queryClient = new QueryClient();
 
@@ -34,8 +35,25 @@ const App = () => (
           {/* Public Routes - No Layout */}
           <Route path="/" element={<Landing />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/track" element={<TrackSearch />} />
-          <Route path="/track/:orderCode" element={<TrackOrder />} />
+          <Route path="/reset" element={<Reset />} />
+          
+          {/* Track Routes - UserLayout */}
+          <Route
+            path="/track"
+            element={
+              <UserLayout>
+                <TrackSearch />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/track/:orderCode"
+            element={
+              <UserLayout>
+                <TrackOrder />
+              </UserLayout>
+            }
+          />
 
           {/* User Routes - UserLayout */}
           <Route
