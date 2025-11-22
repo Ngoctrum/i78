@@ -293,6 +293,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_old_cancelled_orders: { Args: never; Returns: undefined }
       generate_order_code: { Args: never; Returns: string }
       is_admin: { Args: { user_id: string }; Returns: boolean }
     }

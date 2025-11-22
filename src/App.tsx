@@ -13,6 +13,7 @@ import TrackOrder from "./pages/TrackOrder";
 import TrackSearch from "./pages/TrackSearch";
 import MyOrders from "./pages/MyOrders";
 import Support from "./pages/Support";
+import Profile from "./pages/Profile";
 import Dashboard from "./pages/admin/Dashboard";
 import Orders from "./pages/admin/Orders";
 import OrderDetail from "./pages/admin/OrderDetail";
@@ -94,6 +95,14 @@ const App = () => (
             element={
               <UserLayout>
                 <Support />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <UserLayout>
+                <Profile />
               </UserLayout>
             }
           />

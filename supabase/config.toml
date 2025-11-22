@@ -1,1 +1,7 @@
 project_id = "mebctcjwshfhyzevdigt"
+
+[functions.cleanup-cancelled-orders]
+verify_jwt = false
+
+[functions.api-place-order]
+verify_jwt = false
