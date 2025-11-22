@@ -33,7 +33,7 @@ export const ResetPasswordDialog = ({
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(userEmail, {
-        redirectTo: `${window.location.origin}/auth`,
+        redirectTo: `${window.location.origin}/reset`,
       });
 
       if (error) throw error;
