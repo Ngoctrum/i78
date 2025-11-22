@@ -10,8 +10,10 @@ cd <your-repo-name>
 ## Bước 2: Cài Đặt Dependencies
 
 ```bash
-npm install
+npm install --legacy-peer-deps
 ```
+
+⚠️ **LƯU Ý**: Sử dụng flag `--legacy-peer-deps` để tránh lỗi conflict dependencies.
 
 ## Bước 3: Tạo File .env
 
