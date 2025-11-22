@@ -1,8 +1,10 @@
 const Logo = () => {
+  const logoPath = import.meta.env.BASE_URL + 'logo.jpg';
+  
   return (
     <div className="flex items-center gap-2">
       <img 
-        src="/logo.jpg" 
+        src={logoPath}
         alt="Ani Shop Logo" 
         className="h-10 w-10 rounded-full object-cover shadow-lg ring-2 ring-primary/20"
       />
